@@ -6,6 +6,10 @@ import (
 	"sort"
 )
 
+const (
+	minCharsetConfidence = 85
+)
+
 // Result contains all the information that charset detector gives.
 type Result struct {
 	// IANA name of the detected charset.
@@ -86,15 +90,14 @@ var (
 // DetectBest returns the Result with highest Confidence.
 func (d *Detector) DetectBest(b []byte) (r *Result, err error) {
 	input := newRecognizerInput(b, d.stripTag)
-	outputChan := make(chan recognizerOutput)
-	for _, r := range d.recognizers {
-		go matchHelper(r, input, outputChan)
-	}
 	var output Result
-	for i := 0; i < len(d.recognizers); i++ {
-		o := <-outputChan
+	for _, r := range d.recognizers {
+		o := r.Match(input)
 		if output.Confidence < o.Confidence {
 			output = Result(o)
+		}
+		if output.Confidence >= minCharsetConfidence {
+			return &output, nil
 		}
 	}
 	if output.Confidence == 0 {

@@ -1,1 +1,1 @@
-module github.com/gogs/chardet
+module github.com/sschekotikhin/chardet

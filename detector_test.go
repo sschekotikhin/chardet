@@ -2,11 +2,12 @@ package chardet_test
 
 import (
 	"bytes"
-	"github.com/gogs/chardet"
 	"io"
 	"os"
 	"path/filepath"
 	"testing"
+
+	"github.com/sschekotikhin/chardet"
 )
 
 func TestDetector(t *testing.T) {
